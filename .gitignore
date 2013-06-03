@@ -1,0 +1,4 @@
+doc/
+pkg/
+spec/dummy/db/*
+spec/dummy/log/*
