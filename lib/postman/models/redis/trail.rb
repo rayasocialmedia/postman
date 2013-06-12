@@ -26,6 +26,10 @@ module Postman
       list
     end
     
+    def processed!
+      Postman::Redis.redis.srem Postman::Redis.key("trails:unprocessed"), self.id
+    end
+    
     def save
       super
       Postman::Redis.redis.multi do

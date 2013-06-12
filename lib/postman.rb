@@ -18,12 +18,11 @@ module Postman
   mattr_reader :redis
   mattr_accessor :redis_params
 
-
   def self.setup
     yield self
   end
   
-  def self.process
+  def self.deliver
     list = []
     # Find all unprocessed trails
     unprocessed = Trail.find_all_by_status(Trail::UNPROCESSED)
@@ -31,22 +30,19 @@ module Postman
       # list[trail.object.class.to_s] << trail
       # Combine lists of subscribers for the object
       Subscription.find_all_by_object(trail.object).each do |subscription|
-        subscription.user.notify(trail.object, trail.action, trail.timestamp)
+        if trail.originator.nil? || subscription.subscriber.id != trail.originator.id
+          unless trail.originator.nil?
+            puts "Subscription id: #{subscription.id}, Trail id: #{trail.id}, Subscriber id: #{subscription.subscriber.id} and originator id: #{trail.originator.id}"
+          end
+          subscription.subscriber.notify(trail.object, trail.action, trail.timestamp)
+        end
+        trail.processed!
       end
     end
-    # Add notifications to users inboxes
-    # Mark as processed
-  end
-  
-  
-  def self.route
     # Find all unrouted notifications
     # For each notification, find media to deliver
     # Honor user preferences
     # Send push notifications
-  end
-  
-  def self.deliver
     # Find all undelivered notifications
     # For each notification, attempt to deliver
     # If failed, defer sending and increment retry count

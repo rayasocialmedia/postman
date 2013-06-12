@@ -1,5 +1,4 @@
 require 'postman/rails/extensions/active_record'
-# require 'postman/rails/extensions/action_controller'
 require 'rails'
 
 module Postman
@@ -15,9 +14,6 @@ module Postman
         ActiveSupport.on_load(:active_record) do
           ActiveRecord::Base.send :include, Postman::Rails::Extensions::ActiveRecord
         end
-        # ActiveSupport.on_load(:action_controller) do
-        #   ActionController::Base.send(:include, Recognition::Extensions::ActionController)
-        # end
       end
       initializer 'postman.models' do
         if Postman.backend == false
@@ -28,10 +24,12 @@ module Postman
           else
             require 'postman/models/redis/trail'
             require 'postman/models/redis/subscription'
+            require 'postman/models/redis/notification'
           end
         elsif Postman.backend.to_sym == :activerecord
           require 'postman/models/active_record/trail'
           require 'postman/models/active_record/subscription'
+          require 'postman/models/active_record/notification'
         else
           raise Postman::PostmanInvalidBackend, 'Unsupported backend specified'
         end

@@ -12,22 +12,27 @@ describe 'ActiveRecord' do
     it "should be able to call .track on any object" do
       @post.should respond_to :track
     end
+    
     it "should be able to call .subscribe on any object" do
       @post.should respond_to :subscribe
     end
+    
     it "should be able to call .subscribers on any object" do
       @post.should respond_to :subscribers
     end
+    
     it "should be able to add trails" do
       old_count = Postman::Trail.all.count
-      @post.track(@post.user, action: :create)
+      @post.track(action: :create)
       Postman::Trail.all.count.should eq (old_count + 1)
     end
+    
     it "should be able to add subscribers" do
       @post.subscribe(@user)
       @post.subscribe(@another_user)
       @post.subscribers.count.should eq 2
     end
+    
     it "should be able to remove subscribers" do
       @post.unsubscribe(@user)
       @post.subscribers.count.should eq 1

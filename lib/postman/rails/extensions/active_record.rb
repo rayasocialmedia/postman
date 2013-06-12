@@ -5,29 +5,33 @@ module Postman
         def self.included(base)
           # base.extend ClassMethods
         end
-
+        
+        # Notify an object, usually a user, with a change on an object
         def notify object, action, timestamp, payload = nil
           Notification.create({
             user: self,
             action: action,
             payload: payload,
-            object: self
+            object: object
           })
         end
         
+        # Retriece notifications for a specific object, usually a user
         def notifications
-          Notification.where(user: self, )
+          Notification.find_all_by_user(self)
         end
         
-        def track originator, options = {}
+        # Track an action on current object
+        def track options = {}
           Trail.create({
-            originator: originator,
+            originator: options[:originator],
             action: options[:action],
             payload: options[:payload],
             object: self
           })
         end
         
+        # Subscribe a user to current object
         def subscribe user, action = nil
           Subscription.create({
             object: self,
@@ -36,6 +40,7 @@ module Postman
           })
         end
         
+        # TODO: Allow unsubscribing from specific actions
         def unsubscribe user
           Subscription.where(subscriber: user, object: self).destroy
         end
@@ -50,11 +55,7 @@ module Postman
           #   require "postman/rails/models/notifiable"
           #   include Postman::Rails::Models::Notifiable
           # end
-          # 
-          # to be called from notifable models
-          
         end
-      
       end
     end
   end
