@@ -45,9 +45,12 @@ ActiveRecord::Schema.define(:version => 20130529111800) do
 
   create_table "users", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.string   "email",      :default => "", :null => false
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
   end
+
+  add_index "users", ["email"], :name => "index_users_on_email", :unique => true
 
   create_table "vouchers", :force => true do |t|
     t.string   "code"

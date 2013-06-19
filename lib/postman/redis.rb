@@ -35,6 +35,12 @@ module Postman
     def self.zrem key, id
       redis.zrem key, id
     end
+    
+    def self.clean
+      redis.keys("#{prefix}:*").each do |key|
+        redis.del key
+      end
+    end
       
     def self.redis
       if @@connection.nil?
@@ -56,6 +62,11 @@ module Postman
     end
     
     private
+    
+    def self.prefix
+      'postman'
+    end
+      
     def self.redis_key bucket
       "postman:#{bucket}"
     end

@@ -7,8 +7,9 @@ describe Postman do
   end
   
   it "processor should mark all trails processed" do
-    @user = User.create(name: 'John Doe')
-    @post = @user.posts.create(title: 'The Quick Brown Fox Jumps Over The Lazy Dog')
+    @user = FactoryGirl.create(:user)
+    @post = FactoryGirl.create(:post)
+    @another_user = FactoryGirl.create(:user1)
     @post.subscribe @user
     @post.track(action: :foo)
     Postman.deliver

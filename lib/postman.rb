@@ -2,6 +2,7 @@ require 'postman/version'
 require 'postman/exceptions'
 require 'postman/tracker'
 require 'postman/redis'
+require 'postman/mailer'
 
 module Postman
   extend Postman::Redis
@@ -15,7 +16,6 @@ module Postman
   mattr_accessor :backend
   @@backend = false
 
-  mattr_reader :redis
   mattr_accessor :redis_params
 
   def self.setup
@@ -31,9 +31,6 @@ module Postman
       # Combine lists of subscribers for the object
       Subscription.find_all_by_object(trail.object).each do |subscription|
         if trail.originator.nil? || subscription.subscriber.id != trail.originator.id
-          unless trail.originator.nil?
-            puts "Subscription id: #{subscription.id}, Trail id: #{trail.id}, Subscriber id: #{subscription.subscriber.id} and originator id: #{trail.originator.id}"
-          end
           subscription.subscriber.notify(trail.object, trail.action, trail.timestamp)
         end
         trail.processed!
@@ -51,4 +48,4 @@ module Postman
 
 end
 
-require 'postman/rails/engine'
+require 'postman/engine'
